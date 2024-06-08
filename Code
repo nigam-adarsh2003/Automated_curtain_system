@@ -1,0 +1,241 @@
+int pin[8]={2,3,4,5,6,7,8,9};
+int steps[][4] = 
+{
+{HIGH,HIGH,LOW,LOW},
+{HIGH,LOW,LOW,HIGH},
+{LOW,LOW,HIGH,HIGH},
+{LOW,HIGH,HIGH,LOW},
+} ;
+
+int numofroun=1; //Change accordingly to your needs
+
+int current=1;
+int type=3;
+int place=0;
+
+int lastLockState = LOW;   
+long lastLockTime = 0;
+int LockState;
+int Lockreading;
+bool lock=true;
+
+int lastPauseState = LOW;   
+long lastPauseTime = 0;
+int PauseState;
+int Pausereading;
+bool Pauseled=false;
+bool pause=false;
+
+int lastReturnState = LOW;   
+long lastReturnTime = 0;
+int ReturnState;
+int Returnreading;
+
+void setup() {
+for (int num=0; num<5; num++) pinMode(pin[num],OUTPUT);
+for (int num=5; num<8; num++) pinMode(pin[num],INPUT);
+}
+
+void reset(){
+for(int num=0;num<4;num++) digitalWrite(pin[num],LOW);
+}
+
+void stepper()
+{
+for (int num=0; num<4;num++) { digitalWrite(pin[num],steps[abs(type-current)][num]);} if(type==0) {++place;} if(type==3) {--place;} delay(2); } void button1() { Lockreading = digitalRead(pin[5]); if (Lockreading != lastLockState) { lastLockTime = millis(); } if ((millis() - lastLockTime) > 50)
+{
+if (Lockreading != LockState) {
+LockState = Lockreading;
+if (LockState == HIGH) {
+lock=false;        
+if ((place!=1536*numofroun)&&(place!=1024*numofroun)&&(place!=512*numofroun)) {type=abs(type-3);}
+}
+}
+}
+lastLockState = Lockreading;
+}
+
+void button2()
+{
+Pausereading = digitalRead(pin[6]);
+if (Pausereading != lastPauseState) 
+{
+lastPauseTime = millis();
+}
+if ((millis() - lastPauseTime) > 50)
+{
+if (Pausereading != PauseState) {
+PauseState = Pausereading;
+if (PauseState == HIGH) {
+Pauseled=!Pauseled;
+pause=!pause;
+if (Pauseled) {digitalWrite(pin[4],HIGH);}
+if (!Pauseled) {digitalWrite(pin[4],LOW);}
+}
+}
+}
+lastPauseState = Pausereading;
+}
+
+void button3()
+{
+Returnreading = digitalRead(pin[7]);
+if (Returnreading != lastReturnState) 
+{
+lastReturnTime = millis();
+}
+if ((millis() - lastReturnTime) > 50)
+{
+if (Returnreading != ReturnState) {
+ReturnState = Returnreading;
+if (ReturnState == HIGH) {
+type=3;
+while (place>0)
+{
+for (int num=0; num<4;num++) { 
+digitalWrite(pin[num],steps[3-current][num]);}
+--place;
+if (current==3) {current=0;}
+else ++current;
+delay(2);
+}
+reset();
+}
+}
+}
+lastReturnState = Returnreading;
+}
+
+void loop() {
+if (lock==true) {button2();button3();}
+if (!pause)
+{
+if (lock==true) {button1();}
+if (lock==false) {stepper();}
+if ((place==2048)or(place==0)or(((place==1536*numofroun)or(place==1024*numofroun)or(place==512*numofroun))&&(type==3)))
+{lock=true;reset();}
+if (current==3) {current=0;}
+else ++current;
+}
+}
+Setting Up the Arduino Curtain Automation System
+
+
+After testing the stepper motor, you can use the connection diagram above to make the final prototype. After I finished making mine, I simply changed the input (button) into a sound sensor. You can find the code below.
+
+int pin[8]={2,3,4,5,6,7,8,9};
+int steps[][4] = 
+{
+{HIGH,HIGH,LOW,LOW},
+{HIGH,LOW,LOW,HIGH},
+{LOW,LOW,HIGH,HIGH},
+{LOW,HIGH,HIGH,LOW},
+} ;
+
+float numofroun=4.5; //Change accordingly to your needs
+
+int current=1;
+int type=3;
+int place=0;
+
+int claps = 0;
+long detectionSpanInitial = 0;
+long detectionSpan = 0;
+long spancondition;
+bool spanconditioncheck=false;
+
+bool lock=true;
+
+int lastPauseState = LOW;   
+long lastPauseTime = 0;
+int PauseState;
+int Pausereading;
+bool Pauseled=false;
+bool pause=false;
+
+int lastReturnState = LOW;   
+long lastReturnTime = 0;
+int ReturnState;
+int Returnreading;
+
+void setup() {
+for (int num=0; num<5; num++) pinMode(pin[num],OUTPUT);
+for (int num=5; num<8; num++) pinMode(pin[num],INPUT);
+}
+
+void reset(){
+for(int num=0;num<4;num++) digitalWrite(pin[num],LOW);
+}
+
+
+void stepper()
+{
+for (int num=0; num<4;num++) { digitalWrite(pin[num],steps[abs(type-current)][num]);} if(type==0) {++place;} if(type==3) {--place;} delay(2); } void sound() { int sensorState = digitalRead(pin[5]); if (sensorState == 0){ if (claps == 0){ detectionSpanInitial = detectionSpan = millis(); claps++; } else if (claps > 0 && millis()-detectionSpan >= 50){
+detectionSpan = millis();
+claps++;
+}
+}
+if (millis()-detectionSpanInitial >= 400)
+{
+if (claps == 2)
+{
+lock=false;        
+if ((place!=1024*numofroun)&&(place!=512*numofroun)) {type=abs(type-3);}
+spancondition=millis();
+}
+claps = 0;
+}
+}
+
+void button1()
+{
+Pausereading = digitalRead(pin[6]);
+if (Pausereading != lastPauseState) 
+{
+lastPauseTime = millis();
+}
+if ((millis() - lastPauseTime) > 50)
+{
+if (Pausereading != PauseState) {
+PauseState = Pausereading;
+if (PauseState == HIGH) {
+Pauseled=!Pauseled;
+pause=!pause;
+spancondition=millis();
+if (Pauseled) {digitalWrite(pin[4],HIGH);}
+if (!Pauseled) {digitalWrite(pin[4],LOW);}
+}
+}
+}
+lastPauseState = Pausereading;
+}
+
+void button2()
+{
+Returnreading = digitalRead(pin[7]);
+if (Returnreading != lastReturnState) 
+{
+lastReturnTime = millis();
+}
+if ((millis() - lastReturnTime) > 50)
+{
+if (Returnreading != ReturnState) {
+ReturnState = Returnreading;
+if (ReturnState == HIGH) {
+type=3;
+while (place>0)
+{
+for (int num=0; num<4;num++) { digitalWrite(pin[num],steps[3-current][num]);} --place; if (current==3) {current=0;} else ++current; delay(2); } reset(); spancondition=millis(); } } } lastReturnState = Returnreading; } void loop() { if (lock==true) {button1();button2();} if (!pause) { if ((lock==true)&&(millis()-spancondition>1000)) {sound();}
+if (lock==false) {stepper();spanconditioncheck=false; }
+if ((place==2048*numofroun)or(place==0)or(((place==1024*numofroun)or(place==512*numofroun))&&(type==3))){
+lock=true;
+reset();
+if (!spanconditioncheck){
+spancondition=millis();
+spanconditioncheck=true;
+}
+}
+if (current==3) {current=0;}
+else ++current;
+}
+}
