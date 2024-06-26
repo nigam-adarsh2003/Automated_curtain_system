@@ -31,6 +31,10 @@ The "Automated Alarm Curtain System Using IoT" project aims to develop a sophist
 * IRremote Library
 * WiFiNINA Library
 * Ethernet Library
+## Circuit Diagram
+
+![Alarm Curtain](https://github.com/nigam-adarsh2003/Automated_curtain_system/assets/119562732/befcc9c7-696e-474a-baf7-863a31b73455)
+
 ## How This Project Work
 Voice Control Integration:
 Users can give voice commands to control the curtains using compatible virtual assistants like Amazon Alexa or Google Assistant. Virtual assistants interpret the voice commands and send them to the central control hub of the curtain system.
