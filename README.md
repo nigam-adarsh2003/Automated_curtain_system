@@ -36,26 +36,27 @@ The "Automated Alarm Curtain System Using IoT" project aims to develop a sophist
 ![Alarm Curtain](https://github.com/nigam-adarsh2003/Automated_curtain_system/assets/119562732/befcc9c7-696e-474a-baf7-863a31b73455)
 
 ## How This Project Work
-Voice Control Integration:
+#### Voice Control Integration:
+
 Users can give voice commands to control the curtains using compatible virtual assistants like Amazon Alexa or Google Assistant. Virtual assistants interpret the voice commands and send them to the central control hub of the curtain system.
 
-Remote Control Functionality:
+#### Remote Control Functionality:
 
 Users can also control the curtains remotely using a smartphone app. The smartphone app communicates with the central control hub over Wi-Fi or Ethernet, sending commands to open or close the curtains as desired.
 
-Arduino Integration:
+#### Arduino Integration:
 
 The central control hub is likely built using an Arduino board. Arduino microcontrollers receive commands from the voice control interface and the smartphone app and translate them into signals that can be understood by the curtain motors.
 
-Servo Motor Control:
+#### Servo Motor Control:
 
 Servo motors are typically used to control the movement of the curtains. Arduino sends signals to the servo motors based on the commands received, causing them to rotate and either open or close the curtains.
 
-Motion Detection (Optional):
+#### Motion Detection (Optional):
 
 If integrated, motion sensors placed around the home can detect movement. Upon detecting unauthorized movement, the motion sensors trigger an alarm, prompting the curtains to close automatically to deter intruders.
 
-User Interaction:
+#### User Interaction:
 
 Users interact with the system by giving voice commands, using the smartphone app, or manually controlling the curtains with an IR remote control. The system provides feedback to users, confirming that commands have been received and executed successfully.
 ## Conclusion
